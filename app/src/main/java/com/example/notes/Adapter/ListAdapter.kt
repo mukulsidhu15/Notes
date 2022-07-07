@@ -12,15 +12,19 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.Fragments.EditNoteFragment
 import com.example.notes.R
 import com.example.notes.RoomDatabase.Note
+import com.example.notes.ViewModels.NoteViewModel
 
 class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesViewHolder>() {
 
     private var noteList = emptyList<Note>()
-
+    private lateinit var noteViewModel: NoteViewModel
 
 
     inner class NotesViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -33,7 +37,7 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
             title = itemView.findViewById(R.id.mTitle)
             description = itemView.findViewById(R.id.mSubTitle)
             mMenus = itemView.findViewById(R.id.mMenus)
-
+            noteViewModel = ViewModelProvider(context as FragmentActivity).get(NoteViewModel::class.java)
             mMenus.setOnClickListener { popupMenus(it) }
     }
         private fun popupMenus(v:View) {
@@ -51,6 +55,8 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
                                     dialog,_->
                                // noteList.removeAt(absoluteAdapterPosition)
                                 // backup.removeAt(absoluteAdapterPosition)
+                                val deleteNote = noteList[position]
+                                noteViewModel.deletebyId(deleteNote)
                                 // backup.clear()
                                // sharedRemove(position)
                                // backup.clear()
@@ -87,6 +93,8 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
 
         }
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -127,11 +135,6 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
                 }
             }
         })
-
-
-
-
-
 
     }
 

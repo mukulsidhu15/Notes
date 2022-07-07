@@ -9,17 +9,20 @@ import com.example.notes.Repository.NoteRepository
 import com.example.notes.RoomDatabase.Note
 import com.example.notes.RoomDatabase.NoteDatabase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class NoteViewModel(application: Application): AndroidViewModel(application) {
 
     val allNotes: LiveData<List<Note>>
+   // val noteTitle: LiveData<List<Note>>
+
     val repository: NoteRepository
     init {
         val dao = NoteDatabase.getDatabase(application).getNoteDao()
          repository = NoteRepository(dao)
         allNotes = repository.allNotes
+       // noteTitle = repository.noteTitle
+
     }
 
     fun addNotes(note: Note){
@@ -43,4 +46,8 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
     fun searchDatabase(searchQuery: String): LiveData<List<Note>>{
         return repository.searchDatabase(searchQuery).asLiveData()
     }
+
+
+
+
 }

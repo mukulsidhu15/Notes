@@ -24,4 +24,8 @@ interface NoteDao {
 
     @Query("SELECT * FROM notes WHERE title LIKE :searchQuery OR description LIKE :searchQuery")
     fun searchDatabase(searchQuery: String): kotlinx.coroutines.flow.Flow<List<Note>>
+
+
+
+
 }

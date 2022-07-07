@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 class NoteRepository(private val noteDao: NoteDao) {
 
     val allNotes: LiveData<List<Note>> = noteDao.getAllNotes()
+   // val noteTitle: LiveData<List<Note>> = noteDao.getTitle()
+
 
     suspend fun insert(note: Note){
         noteDao.insert(note)
@@ -28,5 +30,9 @@ class NoteRepository(private val noteDao: NoteDao) {
     fun searchDatabase(searchQuery: String): Flow<List<Note>> {
         return noteDao.searchDatabase(searchQuery)
     }
+
+
+
+
 
 }

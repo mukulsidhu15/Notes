@@ -6,15 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
-import com.example.notes.R
 import com.example.notes.RoomDatabase.Note
 import com.example.notes.ViewModels.NoteViewModel
 import com.example.notes.databinding.FragmentAddNoteBinding
-import com.example.notes.databinding.FragmentNotesBinding
 
+
+lateinit var lastFiveAutoSuggestion: ArrayList<String>
+lateinit var note: List<Note>
+lateinit var arrayAdapter: ArrayAdapter<String>
 class AddNoteFragment : Fragment() {
 
     lateinit var binding: FragmentAddNoteBinding
@@ -36,6 +38,14 @@ class AddNoteFragment : Fragment() {
             activity?.supportFragmentManager?.popBackStack()
         }
 
+        lastFiveAutoSuggestion = ArrayList()
+        note = ArrayList()
+
+      //  lastFiveAutoSuggestion.addAll(noteViewModel.noteTitle)
+        val suggestionList = lastFiveAutoSuggestion.distinct()
+        arrayAdapter = ArrayAdapter<String>(requireContext(),android.R.layout.simple_list_item_1, suggestionList.takeLast(5))
+        binding.editTextTitle.setAdapter(arrayAdapter)
+
         return binding.root
 
     }
@@ -49,7 +59,7 @@ class AddNoteFragment : Fragment() {
             noteViewModel.addNotes(note)
             Toast.makeText(requireContext(), "Added", Toast.LENGTH_SHORT).show()
         }else{
-            Toast.makeText(requireContext(), "Added", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Not Added", Toast.LENGTH_SHORT).show()
         }
     }
 
