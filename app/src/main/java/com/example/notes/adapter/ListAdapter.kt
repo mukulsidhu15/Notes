@@ -1,4 +1,4 @@
-package com.example.notes.Adapter
+package com.example.notes.adapter
 
 import android.app.AlertDialog
 import android.content.Context
@@ -8,34 +8,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.example.notes.Fragments.EditNoteFragment
+import com.example.notes.fragments.EditNoteFragment
 import com.example.notes.R
 import com.example.notes.RoomDatabase.Note
+import com.example.notes.viewmodels.NoteViewModel
 
 class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesViewHolder>() {
 
     private var noteList = emptyList<Note>()
-
-
+    private lateinit var noteViewModel: NoteViewModel
 
     inner class NotesViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var title: TextView
         var description: TextView
         var mMenus: ImageView
 
-
         init {
             title = itemView.findViewById(R.id.mTitle)
             description = itemView.findViewById(R.id.mSubTitle)
             mMenus = itemView.findViewById(R.id.mMenus)
-
+            noteViewModel = ViewModelProvider(context as FragmentActivity).get(NoteViewModel::class.java)
             mMenus.setOnClickListener { popupMenus(it) }
     }
+        // for delete popup and dialog
         private fun popupMenus(v:View) {
             val position: Int =  absoluteAdapterPosition
             val popupMenus = PopupMenu(context, v)
@@ -49,20 +49,9 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
                             .setMessage("are you sure?")
                             .setPositiveButton("Yes"){
                                     dialog,_->
-                               // noteList.removeAt(absoluteAdapterPosition)
-                                // backup.removeAt(absoluteAdapterPosition)
-                                // backup.clear()
-                               // sharedRemove(position)
-                               // backup.clear()
-                                // backup.addAll(noteList)
-                                // backup.addAll(notesList)
-
-                             //   notifyItemRemoved(absoluteAdapterPosition)
-
-                               // backup.addAll(notesList)
-                               // Toast.makeText(this,"Deleted this Information", Toast.LENGTH_SHORT).show()
+                                val deleteNote = noteList[position]
+                                noteViewModel.deletebyId(deleteNote)
                                 dialog.dismiss()
-
                             }
                             .setNegativeButton("No"){
                                     dialog,_->
@@ -75,7 +64,6 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
                     }
                     else-> true
                 }
-
             }
             popupMenus.show()
             val popup = PopupMenu::class.java.getDeclaredField("mPopup")
@@ -83,7 +71,6 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
             val menu = popup.get(popupMenus)
             menu.javaClass.getDeclaredMethod("setForceShowIcon",Boolean::class.java)
                 .invoke(menu,true)
-
 
         }
     }
@@ -97,8 +84,8 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
 
     override fun onBindViewHolder(holder: ListAdapter.NotesViewHolder, position: Int) {
         val currentNote = noteList[position]
-        holder.title.text = currentNote.title.toString()
-        holder.description.text = currentNote.description.toString()
+        holder.title.text = currentNote.title
+        holder.description.text = currentNote.description
 
         val id = currentNote.id
         val title = currentNote.title
@@ -128,17 +115,13 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
             }
         })
 
-
-
-
-
-
     }
 
     override fun getItemCount(): Int {
        return noteList.size
     }
 
+    // use for setdata by viewmodel observer
     fun setData(note: List<Note>){
         this.noteList = note
         notifyDataSetChanged()

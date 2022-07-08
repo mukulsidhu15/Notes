@@ -1,21 +1,21 @@
-package com.example.notes.ViewModels
+package com.example.notes.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.notes.Repository.NoteRepository
+import com.example.notes.repository.NoteRepository
 import com.example.notes.RoomDatabase.Note
 import com.example.notes.RoomDatabase.NoteDatabase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class NoteViewModel(application: Application): AndroidViewModel(application) {
 
     val allNotes: LiveData<List<Note>>
-    val repository: NoteRepository
+
+    private val repository: NoteRepository
     init {
         val dao = NoteDatabase.getDatabase(application).getNoteDao()
          repository = NoteRepository(dao)
@@ -43,4 +43,5 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
     fun searchDatabase(searchQuery: String): LiveData<List<Note>>{
         return repository.searchDatabase(searchQuery).asLiveData()
     }
+
 }

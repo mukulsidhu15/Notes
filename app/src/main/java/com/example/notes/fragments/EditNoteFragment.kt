@@ -1,4 +1,4 @@
-package com.example.notes.Fragments
+package com.example.notes.fragments
 
 import android.os.Bundle
 import android.text.TextUtils
@@ -8,36 +8,35 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.example.notes.R
 import com.example.notes.RoomDatabase.Note
-import com.example.notes.ViewModels.NoteViewModel
+import com.example.notes.viewmodels.NoteViewModel
 import com.example.notes.databinding.FragmentEditNoteBinding
-import com.example.notes.databinding.FragmentNotesBinding
+
 
 class EditNoteFragment : Fragment() {
-    lateinit var binding: FragmentEditNoteBinding
+    private lateinit var binding: FragmentEditNoteBinding
     private lateinit var noteViewModel: NoteViewModel
-    var position: Int = 0
+    private var position: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentEditNoteBinding.inflate(inflater, container, false)
 
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
-        val titleNote = requireArguments().getString("title")
-        val description = requireArguments().getString("des")
-        val adapterPos: Int = requireArguments().getInt("position")
+        val noteTitle = requireArguments().getString("title")
+        val noteDescription = requireArguments().getString("des")
+        val notePosition: Int = requireArguments().getInt("position")
 
-        position = adapterPos
-        binding.editTitle.setText(titleNote)
-        binding.editDes.setText(description)
+        position = notePosition
+        binding.editTitle.setText(noteTitle)
+        binding.editDes.setText(noteDescription)
 
         binding.btnSave.setOnClickListener(){
-            UpdateNote()
+            updateNote()
             onDestroy()
             activity?.supportFragmentManager?.popBackStack()
         }
@@ -45,7 +44,8 @@ class EditNoteFragment : Fragment() {
         return binding.root
     }
 
-    private fun UpdateNote(){
+    //for update or edit the note
+    private fun updateNote(){
         val noteTitle= binding.editTitle.text.toString()
         val noteDescription = binding.editDes.text.toString()
 
@@ -59,11 +59,10 @@ class EditNoteFragment : Fragment() {
         }
     }
 
+    //check title and description empty or not
     private fun inputCheck(noteTitle: String, noteDescription: String): Boolean{
         return !(TextUtils.isEmpty(noteTitle) && TextUtils.isEmpty(noteDescription))
     }
-
-
 
 
 }
