@@ -1,9 +1,8 @@
-package com.example.notes.Fragments
+package com.example.notes.fragments
 
-import android.content.Context
+
 import android.os.Bundle
 import android.view.*
-import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,17 +10,17 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.notes.Adapter.ListAdapter
+import com.example.notes.adapter.ListAdapter
 import com.example.notes.R
-import com.example.notes.ViewModels.NoteViewModel
+import com.example.notes.viewmodels.NoteViewModel
 import com.example.notes.databinding.FragmentNotesBinding
 
 
 class NotesFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
-    lateinit var binding: FragmentNotesBinding
+    private lateinit var binding: FragmentNotesBinding
     private lateinit var noteViewModel: NoteViewModel
-    lateinit var adapter : ListAdapter
+    private lateinit var adapter : ListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -31,43 +30,42 @@ class NotesFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQueryTe
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentNotesBinding.inflate(inflater, container, false)
 
-        //toolbar
+        //toolbar for search
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         (activity as AppCompatActivity).supportActionBar?.show()
 
-        //Recycler View
+        //RecyclerView
         adapter= ListAdapter(requireContext())
         val recyclerView = binding.recyclerviewNotes
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        //UserView Model
+        //NoteViewModel observer to set data in adapter
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
         noteViewModel.allNotes.observe(viewLifecycleOwner, Observer { note->
             adapter.setData(note)
         })
 
-
+        // add note floatingButton
         binding.addingBtn.setOnClickListener(){
             activity?.supportFragmentManager?.commit {
-
-              /*  setCustomAnimations(
-                    R.animator.
+                setCustomAnimations(
+                    R.anim.slide_in,
                     R.anim.fade_out,
                     R.anim.fade_in,
                     R.anim.slide_out
-                )  */
+                )
                 setReorderingAllowed(true)
                 hide(activity?.supportFragmentManager?.findFragmentByTag("main_frag")!!)
                 add(R.id.fragmentContainer,AddNoteFragment())
                 addToBackStack(null)
             }
-
         }
+
         return binding.root
     }
 
@@ -84,6 +82,7 @@ class NotesFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQueryTe
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    //function for search note by SearchView
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (query != null){
             searchDataBase(query)
@@ -91,6 +90,7 @@ class NotesFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQueryTe
         return true
     }
 
+    //function for search note by SearchView
     override fun onQueryTextChange(newText: String?): Boolean {
        if (newText != null){
            searchDataBase(newText)
@@ -109,16 +109,14 @@ class NotesFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQueryTe
         return super.onOptionsItemSelected(item)
     }
 
+    //search note from database
     private fun searchDataBase(query: String){
         val searchQuery = "%$query%"
-        noteViewModel.searchDatabase(searchQuery).observe(viewLifecycleOwner, Observer { note->
+        noteViewModel.searchDatabase(searchQuery).observe(viewLifecycleOwner, Observer{ note->
             note.let {
                 adapter.setData(it)
             }
         })
     }
-
-
-
 
 }

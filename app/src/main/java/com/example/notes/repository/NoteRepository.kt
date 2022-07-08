@@ -1,4 +1,4 @@
-package com.example.notes.Repository
+package com.example.notes.repository
 
 import androidx.lifecycle.LiveData
 import com.example.notes.RoomDatabase.Note
@@ -8,31 +8,25 @@ import kotlinx.coroutines.flow.Flow
 class NoteRepository(private val noteDao: NoteDao) {
 
     val allNotes: LiveData<List<Note>> = noteDao.getAllNotes()
-   // val noteTitle: LiveData<List<Note>> = noteDao.getTitle()
-
 
     suspend fun insert(note: Note){
         noteDao.insert(note)
     }
 
-    suspend fun delete(note: Note){
+  /*  suspend fun delete(note: Note){
         noteDao.delete(note)
-    }
+    } */
 
     suspend fun update(note: Note){
         noteDao.update(note)
     }
 
-    suspend fun deletebyId(note: Note){
+    fun deletebyId(note: Note){
         noteDao.deletebyId(note.id)
     }
 
     fun searchDatabase(searchQuery: String): Flow<List<Note>> {
         return noteDao.searchDatabase(searchQuery)
     }
-
-
-
-
 
 }
