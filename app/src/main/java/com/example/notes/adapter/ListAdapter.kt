@@ -26,7 +26,7 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
     inner class NotesViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var title: TextView
         var description: TextView
-        var mMenus: ImageView
+        private var mMenus: ImageView
 
         init {
             title = itemView.findViewById(R.id.mTitle)
@@ -121,7 +121,7 @@ class ListAdapter(val context: Context): RecyclerView.Adapter<ListAdapter.NotesV
        return noteList.size
     }
 
-    // use for setdata by viewmodel observer
+    // use for setData by viewModel observer
     fun setData(note: List<Note>){
         this.noteList = note
         notifyDataSetChanged()
