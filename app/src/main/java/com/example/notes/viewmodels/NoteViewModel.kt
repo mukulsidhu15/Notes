@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 class NoteViewModel(application: Application): AndroidViewModel(application) {
 
     val allNotes: LiveData<List<Note>>
+    val titleList = ArrayList<String>()
 
     private val repository: NoteRepository
     init {
@@ -42,6 +43,10 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
 
     fun searchDatabase(searchQuery: String): LiveData<List<Note>>{
         return repository.searchDatabase(searchQuery).asLiveData()
+    }
+
+    fun get(note: Note){
+       titleList.add(note.title)
     }
 
 }

@@ -119,4 +119,9 @@ class NotesFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQueryTe
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.finish()
+    }
+
 }
